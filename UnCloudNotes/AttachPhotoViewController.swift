@@ -27,6 +27,7 @@
 /// THE SOFTWARE.
 
 import UIKit
+import CoreData
 
 class AttachPhotoViewController: UIViewController {
 
@@ -58,9 +59,13 @@ class AttachPhotoViewController: UIViewController {
 // MARK: - UIImagePickerControllerDelegate
 extension AttachPhotoViewController: UIImagePickerControllerDelegate {
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-    guard let note = note else { return }
+    guard let note = note,
+      let context = note.managedObjectContext else { return }
     
-    note.image = info[.originalImage] as? UIImage
+    let attachment = Attachment(context: context)
+    attachment.dateCreated = Date()
+    attachment.image = info[.originalImage] as? UIImage
+    attachment.note = note
     
     navigationController?.popViewController(animated: true)
   }
